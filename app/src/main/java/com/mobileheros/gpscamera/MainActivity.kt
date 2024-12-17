@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        PlayBillingHelper(applicationContext).queryPurchases(this)
+        PlayBillingHelper(application).queryPurchases(this)
     }
 
     private fun getLocalConfig() {
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
             Global.text = this.getData(Constants.TEXT_CONTENT, "")
             Global.dateFormat = this.getData(Constants.DATE_FORMAT, Constants.FORMAT_LIST[0])
             Global.logo =
-                if (Global.isVip) this.getData(Constants.SWITCH_LOGO, false) else false
+                if (Global.isVip.value) this.getData(Constants.SWITCH_LOGO, false) else false
             Global.scale = this.getData(Constants.SCALE, 0.5f)
         }
     }

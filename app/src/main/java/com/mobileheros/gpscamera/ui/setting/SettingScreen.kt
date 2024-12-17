@@ -52,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobileheros.gpscamera.R
@@ -59,10 +60,13 @@ import com.mobileheros.gpscamera.ui.common.TitleBar
 import com.mobileheros.gpscamera.utils.Utils
 
 @Composable
-fun SettingScreen(viewModel: SettingViewModel = viewModel()) {
-
+fun SettingScreen(
+    navBack: () -> Unit,
+    navPrivacy: () -> Unit,
+    viewModel: SettingViewModel = hiltViewModel()
+) {
     Scaffold(topBar = {
-        TitleBar(title = stringResource(id = R.string.settings))
+        TitleBar(title = stringResource(id = R.string.settings), navBack = navBack)
     }) { innerPadding ->
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
         var inputDialogShow = remember { mutableStateOf(false) }
@@ -89,7 +93,7 @@ fun SettingScreen(viewModel: SettingViewModel = viewModel()) {
                 Spacer(modifier = Modifier.size(12.dp))
                 RateItem(rateDialogShow)
                 Spacer(modifier = Modifier.size(12.dp))
-                PrivacyItem()
+                PrivacyItem(navPrivacy)
                 Spacer(modifier = Modifier.size(12.dp))
                 VersionItem()
             }
@@ -194,10 +198,10 @@ fun RateItem(show: MutableState<Boolean>) {
 }
 
 @Composable
-fun PrivacyItem() {
+fun PrivacyItem(navPrivacy: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors().copy(containerColor = Color.White),
-        onClick = { /*TODO*/ }) {
+        onClick = { navPrivacy() }) {
         Row(
             modifier = Modifier
                 .padding(15.dp)
@@ -247,7 +251,7 @@ fun InputDialog(
             mutableStateOf(value)
         }
         Dialog(onDismissRequest = { show.value = false }) {
-            Card {
+            Card(colors = CardDefaults.cardColors().copy(containerColor = Color.White)) {
                 Column(
                     modifier = Modifier.padding(
                         top = 20.dp,
@@ -291,7 +295,7 @@ fun RateDialog(show: MutableState<Boolean>) {
         }
         val context = LocalContext.current
         Dialog(onDismissRequest = { show.value = false }) {
-            Card {
+            Card(colors = CardDefaults.cardColors().copy(containerColor = Color.White)) {
                 Column(
                     modifier = Modifier
                         .padding(
@@ -354,7 +358,8 @@ fun RateDialog(show: MutableState<Boolean>) {
                                     //todo 跳转商店
                                     Toast.makeText(context, "5星好评", Toast.LENGTH_LONG).show()
                                 }
-                                show.value = false }) {
+                                show.value = false
+                            }) {
                             Text(text = stringResource(id = R.string.rate_us).toUpperCase(locale = Locale.current))
                         }
                     }

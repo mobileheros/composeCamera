@@ -16,14 +16,14 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TitleBar(title: String) {
+fun TitleBar(title: String, navBack: () -> Unit = {}) {
     TopAppBar(
         title = { Text(text = title) },
         navigationIcon = {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = null,
-                modifier = Modifier.padding(horizontal = 10.dp).clickable {  }
+                modifier = Modifier.padding(horizontal = 10.dp).clickable { navBack() }
             )
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(containerColor = Color.White)

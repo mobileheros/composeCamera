@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mobileheros.gpscamera.ui.camera.CameraScreen
+import com.mobileheros.gpscamera.ui.privacy.PrivacyScreen
 import com.mobileheros.gpscamera.ui.setting.SettingScreen
 import com.mobileheros.gpscamera.ui.subscribe.SubscribeScreen
 import com.mobileheros.gpscamera.ui.watermark.WatermarkSettingScreen
@@ -38,17 +39,28 @@ fun AppNavGraph(
         composable(
             AppScreens.WATERMARK_SCREEN,
         ) {
-            WatermarkSettingScreen()
+            WatermarkSettingScreen(navBack = {
+                navController.navigateUp()
+            }, navSetting = {
+                navActions.navigationToSetting()
+            }, navSubscribe = { navActions.navigationToSubscribe() })
         }
         composable(
             AppScreens.SETTING_SCREEN,
         ) {
-            SettingScreen()
+            SettingScreen(
+                navBack = { navController.navigateUp() },
+                navPrivacy = { navActions.navigationToPrivacy() })
         }
         composable(
             AppScreens.SUBSCRIBE_SCREEN,
         ) {
-            SubscribeScreen()
+            SubscribeScreen(navBack = { navController.navigateUp() },)
+        }
+        composable(
+            AppScreens.PRIVACY_SCREEN,
+        ) {
+            PrivacyScreen(navBack = { navController.navigateUp() })
         }
     }
 }

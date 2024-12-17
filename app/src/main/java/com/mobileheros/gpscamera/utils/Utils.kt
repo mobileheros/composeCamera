@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
+import android.icu.util.TimeZone
 import android.location.Location
 import android.net.Uri
 import android.provider.Settings
@@ -65,5 +66,8 @@ object Utils {
             append(if (location.longitude >= 0) "E" else "W")
         }
         return build.toString()
+    }
+    fun formatVideoRecordTime(time: Long): String {
+        return SimpleDateFormat("HH:mm:ss", Locale.getDefault()).apply { timeZone = TimeZone.GMT_ZONE }.format(time * 1000)
     }
 }

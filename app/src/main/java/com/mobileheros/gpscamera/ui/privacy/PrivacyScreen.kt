@@ -11,19 +11,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import com.mobileheros.gpscamera.R
 import com.mobileheros.gpscamera.ui.common.TitleBar
 import com.mobileheros.gpscamera.utils.Constants.PRIVACY_URL
 
 @Composable
-fun PrivacyScreen() {
-    Scaffold(topBar = { TitleBar(title = stringResource(id = R.string.privacy_and_policy)) }) { innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxWidth()
-            .fillMaxHeight()) {
+fun PrivacyScreen(navBack: () -> Unit) {
+    Scaffold(topBar = {
+        TitleBar(
+            title = stringResource(id = R.string.privacy_and_policy),
+            navBack = navBack
+        )
+    }) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
             WebViewScreen()
         }
     }
@@ -47,10 +53,4 @@ fun WebViewScreen() {
             it.loadUrl(PRIVACY_URL)
         }
     )
-}
-
-@Preview
-@Composable
-fun testPrivacy() {
-    PrivacyScreen()
 }

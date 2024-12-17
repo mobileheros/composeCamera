@@ -1,6 +1,7 @@
 package com.mobileheros.gpscamera.utils
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.android.billingclient.api.AcknowledgePurchaseParams
@@ -32,13 +33,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class PlayBillingHelper @Inject constructor(
-    @ApplicationContext
-    context: Context,
-) : PurchasesUpdatedListener, BillingClientStateListener {
+class PlayBillingHelper(application: Application) : PurchasesUpdatedListener, BillingClientStateListener {
 
-    private val billingClient: BillingClient = BillingClient.newBuilder(context)
+    private val billingClient: BillingClient = BillingClient.newBuilder(application)
         .setListener(this)
         .enablePendingPurchases(
             PendingPurchasesParams.newBuilder().enableOneTimeProducts().enablePrepaidPlans().build()
@@ -51,7 +48,7 @@ class PlayBillingHelper @Inject constructor(
     }
 
     fun startConnection() {
-        Logger.e("startConnection")
+        Logger.e("startConnection--$billingClient")
         billingClient.startConnection(this)
     }
 
@@ -111,6 +108,7 @@ class PlayBillingHelper @Inject constructor(
 
     //查询商品列表
     suspend fun queryProductDetails(): List<ProductDetails> {
+        Logger.e("queryProductDetails--$billingClient")
         val queryProductDetailsParams =
             QueryProductDetailsParams.newBuilder()
                 .setProductList(
@@ -233,14 +231,14 @@ class PlayBillingHelper @Inject constructor(
             if (billingResult.responseCode == BillingResponseCode.OK) {
                 Log.e("test", list.toString())
                 val result = list.filter { it.purchaseState == PurchaseState.PURCHASED }
-//                Global.isVip = false
-                if (Global.isVip != (result.isNotEmpty())) {
-                    Global.isVip = (result.isNotEmpty())
+//                Global.isVip.value = false
+                if (Global.isVip.value != (result.isNotEmpty())) {
+                    Global.isVip.value = (result.isNotEmpty())
                     //已订阅
                     runBlocking(Dispatchers.Main) {
 //                        EventBus.getDefault().post(SubscribeStatusEvent())
                     }
-                    context?.localConfig?.putData("isVip", Global.isVip)
+                    context?.localConfig?.putData("isVip", Global.isVip.value)
                 }
             }
         }
@@ -302,19 +300,19 @@ class PlayBillingHelper @Inject constructor(
     companion object {
         private val TAG = PlayBillingHelper::class.java.simpleName
 
-//        @Volatile
-//        private var sInstance: PlayBillingHelper? = null
-//
-//        // Standard boilerplate double check locking pattern for thread-safe singletons.
-//        @JvmStatic
-//        fun getInstance(
-//            application: Application,
-//        ) = sInstance ?: synchronized(this) {
-//            sInstance ?: PlayBillingHelper(
-//                application,
-//            )
-//                .also { sInstance = it }
-//        }
+        @Volatile
+        private var sInstance: PlayBillingHelper? = null
+
+        // Standard boilerplate double check locking pattern for thread-safe singletons.
+        @JvmStatic
+        fun getInstance(
+            application: Application,
+        ) = sInstance ?: synchronized(this) {
+            sInstance ?: PlayBillingHelper(
+                application,
+            )
+                .also { sInstance = it }
+        }
     }
 
 

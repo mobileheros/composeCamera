@@ -1,6 +1,7 @@
 package com.mobileheros.gpscamera.utils
 
 import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
 
 object Global {
     var scale: Float = 0.5f
@@ -14,7 +15,7 @@ object Global {
     var altitude: Boolean = true
     var gps: Boolean = true
     var compass: Boolean = true
-    var isVip: Boolean = false
+    var isVip = mutableStateOf(false)
     var isVideo: Boolean = false
     var hasShowRateDialog = false
     var firstPhoto = false

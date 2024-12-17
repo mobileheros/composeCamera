@@ -1,6 +1,7 @@
 package com.mobileheros.gpscamera.ui.subscribe
 
 import android.app.Activity
+import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -62,41 +63,48 @@ import com.mobileheros.gpscamera.R
 import com.mobileheros.gpscamera.bean.ResolutionBean
 import com.mobileheros.gpscamera.utils.Constants
 import com.mobileheros.gpscamera.utils.Global
+import java.util.Locale
 
-@Preview
 @Composable
-fun SubscribeScreen(viewModel: SubscribeViewModel = hiltViewModel()) {
+fun SubscribeScreen(navBack: () -> Unit,viewModel: SubscribeViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isTrial = remember { mutableStateOf(true) }
     val context = LocalContext.current
-    val renewTip = if (uiState.isVip) {
-        if (isTrial.value) {
-            stringResource(R.string.renew_tip_trial, "1", "2", "3", "4")
-        } else {
-            stringResource(R.string.renew_tip_normal, "1", "2")
-        }
-    } else ""
+    val renewTip = remember { mutableStateOf("") }
     uiState.list.forEach {
         it.transform(context)
     }
+    if (uiState.list.isNotEmpty()) {
+        val bean = uiState.list[uiState.index]
+        val result = bean.product.pricingPhases.pricingPhaseList.find { it.priceAmountMicros == 0L }
+        isTrial.value = result != null
+        val price = bean.product.pricingPhases.pricingPhaseList.last().formattedPrice
+        val priceStr = "$price per ${bean.title.substring(0, bean.title.length - 2).lowercase()}"
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000)
 
-    val checkedIndex = remember {
-        mutableIntStateOf(uiState.list.indexOfFirst { it.checked }.takeIf { it >= 0 } ?: 0)
+        renewTip.value = if (!Global.isVip.value) {
+            if (isTrial.value) {
+                stringResource(R.string.renew_tip_trial, bean.title.lowercase(), date, priceStr, date)
+            } else {
+                stringResource(R.string.renew_tip_normal, bean.title, price)
+            }
+        } else ""
     }
+
     Scaffold { innerPadding->
         ConstraintLayout(modifier = Modifier.padding(innerPadding).background(color = Color(0xFF101118)).fillMaxSize()) {
             val (table, button) = createRefs()
             TopArea(modifier = Modifier.constrainAs(table) {
                 top.linkTo(parent.top)
                 bottom.linkTo(button.top)
-            }, uiState.isVip, uiState.list, viewModel::checkIndex)
+            }, Global.isVip.value, uiState.list,uiState.index, viewModel::checkIndex)
             BottomArea(modifier = Modifier.constrainAs(button) {
                 bottom.linkTo(parent.bottom)
-            }, uiState.isVip, tip = renewTip) {
-                if (uiState.isVip) {
-                    (context as Activity).finish()
+            }, Global.isVip.value, tip = renewTip.value) {
+                if (Global.isVip.value) {
+                    navBack()
                 } else {
-
+                    viewModel.joinNow(context as Activity)
                 }
             }
         }
@@ -110,6 +118,7 @@ fun TopArea(
     modifier: Modifier,
     isVip: Boolean,
     list: List<ProductItemBean>,
+    index: Int,
     onClick: (Int) -> Unit
 ) {
     Column(
@@ -162,7 +171,7 @@ fun TopArea(
             HorizontalLine()
         }
         Spacer(Modifier.height(20.dp))
-        if (Global.isVip) {
+        if (Global.isVip.value) {
             OwnedTip()
         } else {
             LazyVerticalGrid(
@@ -172,10 +181,8 @@ fun TopArea(
             ) {
                 for (i in list.indices) {
                     item {
-                        SubscribeItem(i, list[i].title, list[i].subTitle, list[i].checked, onClick)
+                        SubscribeItem(i, list[i].title, list[i].subTitle, i == index, onClick)
                     }
-                }
-                items(list) {
                 }
             }
         }

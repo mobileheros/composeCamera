@@ -1,19 +1,18 @@
 package com.mobileheros.gpscamera.ui.watermark
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.CreationExtras
 import com.mobileheros.gpscamera.utils.Constants
 import com.mobileheros.gpscamera.utils.Global
 import com.mobileheros.gpscamera.utils.getData
 import com.mobileheros.gpscamera.utils.localConfig
 import com.mobileheros.gpscamera.utils.putData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class WatermarkSettingUiState(
     val compass: Boolean = Global.compass,
@@ -26,31 +25,20 @@ data class WatermarkSettingUiState(
     val logo: Boolean = Global.logo,
     val tag: Boolean = Global.tag,
     val textSwitch: Boolean = Global.textSwitch,
-    val tagList: MutableList<String> = mutableListOf(),
     val tagListString: String = "",
     val text: String = Global.text,
     val scale: Float = Global.scale
 )
 
-class WatermarkSettingViewModel(private val config: DataStore<Preferences>) : ViewModel() {
-    companion object {
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-                val application = checkNotNull(extras[APPLICATION_KEY])
-                return WatermarkSettingViewModel(
-                    application.localConfig
-                ) as T
-            }
-        }
-    }
-
+@HiltViewModel
+class WatermarkSettingViewModel @Inject constructor(@ApplicationContext private val context: Context) : ViewModel() {
+    private val config = context.localConfig
     private val _uiState = MutableStateFlow(
         WatermarkSettingUiState(
-            tagList = if (config.getData(Constants.TAG_LIST, "").isEmpty()) {
-                mutableListOf()
-            } else {
-                config.getData(Constants.TAG_LIST, "").split(",").toMutableList()
-            }
+            tagListString = config.getData(
+                Constants.TAG_LIST,
+                ""
+            )
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -119,6 +107,7 @@ class WatermarkSettingViewModel(private val config: DataStore<Preferences>) : Vi
             currentState.copy(logo = flag)
         }
     }
+
     fun updateTextSwitch(flag: Boolean) {
         _uiState.update { currentState ->
             Global.textSwitch = flag
@@ -135,23 +124,6 @@ class WatermarkSettingViewModel(private val config: DataStore<Preferences>) : Vi
         }
     }
 
-    fun addTag(tag: String) {
-        _uiState.update { currentState ->
-            currentState.tagList.add(tag)
-            config.putData(Constants.TAG_LIST, currentState.tagList.joinToString(","))
-            val list = mutableListOf<String>()
-            list.addAll(currentState.tagList)
-            currentState.copy(tagList = list)
-        }
-    }
-
-    fun deleteTag(tag: String) {
-        _uiState.update { currentState ->
-            currentState.tagList.remove(tag)
-            config.putData(Constants.TAG_LIST, currentState.tagList.joinToString(","))
-            currentState.copy(tagList = mutableListOf<String>().apply { addAll(currentState.tagList) })
-        }
-    }
     fun updateTagList(tag: String) {
         _uiState.update { currentState ->
             config.putData(Constants.TAG_LIST, tag)
@@ -166,6 +138,7 @@ class WatermarkSettingViewModel(private val config: DataStore<Preferences>) : Vi
             currentState.copy(text = text)
         }
     }
+
     fun updateScale(scale: Float) {
         _uiState.update { currentState ->
             config.putData(Constants.SCALE, scale)

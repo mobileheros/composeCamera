@@ -52,12 +52,9 @@ object Constants {
         ResolutionBean(true, 6000, 8000),
     )
     val video_resolution_list = listOf(
-        ResolutionBean(false, 540, 960).apply { title = "540P" },
+        ResolutionBean(false, 480, 640).apply { title = "480P" },
         ResolutionBean(true, 720, 1280).apply { title = "720P" },
         ResolutionBean(true, 1080, 1920).apply { title = "1080P" },
-//        ResolutionBean(true, 1440, 2560).apply { title = "2K" },
-//        ResolutionBean(true, 2160, 3840).apply { title = "4K" },
-//        ResolutionBean(true, 4320, 7680).apply { title = "8K" },
     )
 
 }

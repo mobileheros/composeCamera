@@ -28,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -64,26 +65,53 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.mobileheros.gpscamera.R
 import com.mobileheros.gpscamera.utils.Constants
+import com.mobileheros.gpscamera.utils.Global
+import com.orhanobut.logger.Logger
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WatermarkSettingScreen(viewModel: WatermarkSettingViewModel = viewModel(factory = WatermarkSettingViewModel.Factory)) {
+fun WatermarkSettingScreen(
+    navBack: () -> Unit,
+    navSetting: () -> Unit,
+    navSubscribe: () -> Unit,
+    viewModel: WatermarkSettingViewModel = hiltViewModel()
+) {
     Scaffold(topBar = {
         TopAppBar(
             modifier = Modifier.background(Color.White),
-            title = { Text(text = stringResource(id = R.string.app_name)) })
+            title = { Text(text = stringResource(id = R.string.watermark_settings)) },
+            navigationIcon = {
+                Image(
+                    painter = painterResource(id = R.mipmap.ic_back),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable { navBack() }
+                        .padding(horizontal = 10.dp)
+                )
+            },
+            actions = {
+                Image(
+                    painter = painterResource(id = R.mipmap.setting),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clickable { navSetting() }
+                        .padding(end = 12.dp)
+                )
+            }
+        )
+
     }) { innerPadding ->
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+        Logger.e(uiState.tagListString + "---------------111")
         val showDateFormatDialog = remember {
             mutableStateOf(false)
         }
@@ -110,7 +138,8 @@ fun WatermarkSettingScreen(viewModel: WatermarkSettingViewModel = viewModel(fact
                     checked = uiState.logo,
                     viewModel::updateLogo,
                     uiState.scale,
-                    viewModel::updateScale
+                    viewModel::updateScale,
+                    navSubscribe
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 TextItem(
@@ -180,8 +209,8 @@ fun TopPanel(viewModel: WatermarkSettingViewModel) {
                 viewModel::updateAddress
             )
             HorizontalDivider(color = colorResource(id = R.color.gray_line), thickness = 0.5.dp)
-            SwitchItem(stringResource(id = R.string.map), uiState.value.map, viewModel::updateMap)
-            HorizontalDivider(color = colorResource(id = R.color.gray_line), thickness = 0.5.dp)
+//            SwitchItem(stringResource(id = R.string.map), uiState.value.map, viewModel::updateMap)
+//            HorizontalDivider(color = colorResource(id = R.color.gray_line), thickness = 0.5.dp)
             SwitchItem(
                 stringResource(id = R.string.weather),
                 uiState.value.weather,
@@ -255,9 +284,10 @@ fun DateItem(format: String, showDialog: MutableState<Boolean>) {
 @Composable
 fun LogoItem(
     checked: Boolean,
-    onCheckedChange: ((Boolean) -> Unit)?,
+    onCheckedChange: ((Boolean) -> Unit),
     scale: Float,
-    update: (Float) -> Unit
+    update: (Float) -> Unit,
+    navSubscribe: () -> Unit
 ) {
     Box(
         modifier = bgModifier
@@ -271,7 +301,10 @@ fun LogoItem(
             Row(
                 modifier = Modifier
                     .height(52.dp)
-                    .padding(15.dp),
+                    .padding(15.dp)
+                    .clickable(enabled = !Global.isVip.value) {
+                        navSubscribe()
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -284,14 +317,19 @@ fun LogoItem(
                 Spacer(modifier = Modifier.size(8.dp))
                 Image(painter = painterResource(id = R.mipmap.ic_pro), contentDescription = null)
                 Spacer(modifier = Modifier.weight(1f))
-                YellowSwitch(checked = checked, onCheckedChange = onCheckedChange)
+                YellowSwitch(
+                    checked = if (Global.isVip.value) checked else false,
+                    onCheckedChange = if (Global.isVip.value) onCheckedChange else fun(_: Boolean) {
+                        navSubscribe()
+                    })
             }
             if (checked) {
-                var imageUri by remember { mutableStateOf<Uri?>(null) }
+                var imageUri by remember { mutableStateOf<Uri?>(Global.imageUri) }
                 val launcher =
                     rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                         if (uri != null) {
                             imageUri = uri
+                            Global.imageUri = uri
                         }
                     }
                 Row(
@@ -329,7 +367,7 @@ fun LogoItem(
 
             }
             if (checked) {
-                val scale = remember {
+                val factor = remember {
                     mutableFloatStateOf(scale)
                 }
                 Row(
@@ -340,8 +378,8 @@ fun LogoItem(
                     Text(text = stringResource(id = R.string.small), style = style)
                     Spacer(modifier = Modifier.width(15.dp))
                     Slider(
-                        value = scale.value, onValueChange = {
-                            scale.value = it
+                        value = factor.floatValue, onValueChange = {
+                            factor.floatValue = it
                             update(it)
                         }, colors = SliderDefaults.colors(
                             thumbColor = colorResource(
@@ -378,7 +416,7 @@ fun TextItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.logo),
+                    text = stringResource(id = R.string.text),
                     style = TextStyle(
                         fontSize = 16.sp,
                         color = colorResource(id = R.color.text_222222)
@@ -515,7 +553,7 @@ fun DataFormatDialog(
 ) {
     if (show.value) {
         Dialog(onDismissRequest = { show.value = false }) {
-            Card {
+            Card(colors = CardDefaults.cardColors().copy(containerColor = Color.White)) {
                 Column(modifier = Modifier.padding(vertical = 12.dp)) {
                     Text(
                         text = stringResource(id = R.string.format),
@@ -588,7 +626,7 @@ fun InputDialog(
             mutableStateOf("")
         }
         Dialog(onDismissRequest = { show.value = false }) {
-            Card {
+            Card(colors = CardDefaults.cardColors().copy(containerColor = Color.White)) {
                 Column(
                     modifier = Modifier.padding(
                         top = 20.dp,
@@ -638,16 +676,18 @@ fun DeleteDialog(
     if (show.value) {
 
         Dialog(onDismissRequest = { show.value = false }) {
-            Card {
+            Card(colors = CardDefaults.cardColors().copy(containerColor = Color.White)) {
                 Column(
                     modifier = Modifier.padding(
                         top = 20.dp,
                         start = 15.dp,
                         end = 15.dp,
                         bottom = 5.dp
-                    )
+                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(text = stringResource(id = R.string.notice))
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(text = stringResource(id = R.string.delete_tag))
                     Spacer(modifier = Modifier.height(15.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -672,10 +712,4 @@ fun DeleteDialog(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun Test() {
-    WatermarkSettingScreen()
 }
