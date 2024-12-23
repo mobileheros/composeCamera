@@ -21,6 +21,14 @@ material = "1.12.0"
 datastoreCoreAndroid = "1.1.1"
 billingKtx = "7.0.0"
 net = "3.5.6"
+constraintlayout = "2.1.4"
+ultimatebarx = "0.8.1"
+xxpermissions = "18.62"
+eventbus = "3.3.1"
+glide = "4.16.0"
+appcompat = "1.6.1"
+navigationFragment = "2.8.5"
+navigationUiKtx = "2.6.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -56,6 +64,17 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billingKtx" }
 net = { module = "com.github.liangjingkanji:Net", version.ref = "net" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+ultimate-bar-x = { group = "com.gitee.zackratos", name="UltimateBarX", version.ref = "ultimatebarx" }
+eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+x-permissions = { group = "com.github.getActivity", name = "XXPermissions", version.ref = "xxpermissions" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -16,6 +16,7 @@ object Global {
     var gps: Boolean = true
     var compass: Boolean = true
     var isVip = mutableStateOf(false)
+    var localVip: Boolean = false
     var isVideo: Boolean = false
     var hasShowRateDialog = false
     var firstPhoto = false

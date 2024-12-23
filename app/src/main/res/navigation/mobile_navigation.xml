@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_camera">
+    <fragment
+        android:id="@+id/navigation_camera"
+        android:name="com.mobileheros.gpscamera.ui.camera.CameraFragment"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_camera_to_tag"
+            app:destination="@+id/navigation_tag" />
+        <action
+            android:id="@+id/action_camera_to_subscribe"
+            app:destination="@+id/navigation_subscribe_single" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_subscribe_single"
+        android:name="com.mobileheros.gpscamera.ui.subscribe.SubscribeFragment"
+        android:label="@string/title_subscribe" />
+    <fragment
+        android:id="@+id/navigation_tag"
+        android:name="com.mobileheros.gpscamera.ui.watermark.WatermarkFragment">
+        <action
+            android:id="@+id/action_tag_to_setting"
+            app:destination="@+id/navigation_setting" />
+        <action
+            android:id="@+id/action_tag_to_subscribe"
+            app:destination="@+id/navigation_subscribe_single" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_setting"
+        android:name="com.mobileheros.gpscamera.ui.setting.SettingFragment">
+        <action
+            android:id="@+id/action_setting_to_web"
+            app:destination="@+id/navigation_web" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_web"
+        android:name="com.mobileheros.gpscamera.ui.privacy.PrivacyFragment">
+    </fragment>
+</navigation>

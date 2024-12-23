@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -41,6 +42,8 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.7"
@@ -85,6 +88,7 @@ dependencies {
     implementation(libs.billing.ktx)
     implementation (libs.gson)
     implementation("com.google.dagger:hilt-android:2.44")
+    implementation(libs.androidx.navigation.fragment)
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.navigation:navigation-compose:2.8.0")
@@ -95,6 +99,16 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
     implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation ("com.otaliastudios:cameraview:2.7.2")
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.ultimate.bar.x)
+    implementation ("com.nex3z:flow-layout:1.3.3")
+    implementation (libs.glide)
+    implementation (libs.eventbus)
+    implementation (libs.x.permissions)
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.navigation.ui.ktx)
 
 
     testImplementation(libs.junit)
@@ -107,4 +121,20 @@ dependencies {
 }
 kapt {
     correctErrorTypes = true
+}
+secrets {
+    // To add your Maps API key to this project:
+    // 1. If the secrets.properties file does not exist, create it in the same folder as the local.properties file.
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+    propertiesFileName = "secrets.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
+
+    // Configure which keys should be ignored by the plugin by providing regular expressions.
+    // "sdk.dir" is ignored by default.
+    ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
+    ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
 }

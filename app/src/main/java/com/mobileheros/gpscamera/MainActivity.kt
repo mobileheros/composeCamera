@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.fragment.app.FragmentActivity
+import androidx.navigation.findNavController
+import com.mobileheros.gpscamera.databinding.ActivityMainBinding
 import com.mobileheros.gpscamera.ui.theme.GpsCameraTheme
 import com.mobileheros.gpscamera.utils.Constants
 import com.mobileheros.gpscamera.utils.Global
@@ -13,16 +16,19 @@ import com.mobileheros.gpscamera.utils.localConfig
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         getLocalConfig()
-        setContent {
-            GpsCameraTheme {
-                AppNavGraph()
-            }
-        }
+//        enableEdgeToEdge()
+//        setContent {
+//            GpsCameraTheme {
+//                AppNavGraph()
+//            }
+//        }
 
     }
 
