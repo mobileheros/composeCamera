@@ -142,11 +142,11 @@ class CameraFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         Logger.e("onViewCreated: $this")
         statusBar {
-            color = Color.BLACK
-            light = false
+            color = Color.WHITE
+            light = true
         }
         navigationBar {
-            color = Color.BLACK
+            color = Color.WHITE
         }
         setupCamera()
         switchMode(Global.isVideo)
@@ -164,37 +164,63 @@ class CameraFragment : Fragment(), View.OnClickListener {
         EventBus.getDefault().register(this)
         query()
 
+//        updateBottomView()
+    }
+
+    private fun updateBottomView() {
         binding.modeLayout.postDelayed({
             val viewHeight = binding.middleLayout.height + binding.modeLayout.height
             val screenHeight = resources.displayMetrics.heightPixels
             val navBarHeight = UltimateBarX.getNavigationBarHeight()
-            var enough = screenHeight - navBarHeight >= viewHeight
+            val enough = screenHeight - navBarHeight >= viewHeight
             if (enough) {
                 ConstraintSet().also {
                     it.clone(binding.rootView)
                     it.clear(binding.bottomPanel.id, ConstraintSet.TOP)
                     it.clear(binding.bottomPanel.id, ConstraintSet.BOTTOM)
-                    it.connect(binding.bottomPanel.id, ConstraintSet.BOTTOM, binding.middleLayout.id, ConstraintSet.BOTTOM)
+                    it.connect(
+                        binding.bottomPanel.id,
+                        ConstraintSet.BOTTOM,
+                        binding.middleLayout.id,
+                        ConstraintSet.BOTTOM
+                    )
 
                     it.clear(binding.modeLayout.id, ConstraintSet.BOTTOM)
                     it.clear(binding.modeLayout.id, ConstraintSet.TOP)
-                    it.connect(binding.modeLayout.id, ConstraintSet.TOP, binding.middleLayout.id, ConstraintSet.BOTTOM)
+                    it.connect(
+                        binding.modeLayout.id,
+                        ConstraintSet.TOP,
+                        binding.middleLayout.id,
+                        ConstraintSet.BOTTOM
+                    )
                     it.applyTo(binding.rootView)
                 }
                 binding.modeLayout.alpha = 1f
+                binding.bottomPanel.background.alpha = 1
             } else {
                 ConstraintSet().also {
                     it.clone(binding.rootView)
                     it.clear(binding.modeLayout.id, ConstraintSet.BOTTOM)
                     it.clear(binding.modeLayout.id, ConstraintSet.TOP)
-                    it.connect(binding.modeLayout.id, ConstraintSet.BOTTOM, binding.middleLayout.id, ConstraintSet.BOTTOM)
+                    it.connect(
+                        binding.modeLayout.id,
+                        ConstraintSet.BOTTOM,
+                        binding.middleLayout.id,
+                        ConstraintSet.BOTTOM
+                    )
 
                     it.clear(binding.bottomPanel.id, ConstraintSet.TOP)
                     it.clear(binding.bottomPanel.id, ConstraintSet.BOTTOM)
-                    it.connect(binding.bottomPanel.id, ConstraintSet.BOTTOM, binding.modeLayout.id, ConstraintSet.TOP)
+                    it.connect(
+                        binding.bottomPanel.id,
+                        ConstraintSet.BOTTOM,
+                        binding.modeLayout.id,
+                        ConstraintSet.TOP
+                    )
                     it.applyTo(binding.rootView)
                 }
                 binding.modeLayout.alpha = 0.5f
+                binding.bottomPanel.background.alpha = 0
             }
             Logger.e("UltimateBarX.getNavigationBarHeight()===${UltimateBarX.getNavigationBarHeight()}")
             Logger.e("viewHeight:$viewHeight=====screenHeight$screenHeight=====root:${binding.root.height}")
@@ -1344,6 +1370,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
         binding.takePicture.setImageResource(if (isVideo) R.mipmap.ic_take_video else R.mipmap.ic_take_photo)
 
         if (isVideo) setupVideoSize() else setupPictureSize()
+        updateBottomView()
     }
 
     fun hideSpinnerDropDown(spinner: Spinner?) {

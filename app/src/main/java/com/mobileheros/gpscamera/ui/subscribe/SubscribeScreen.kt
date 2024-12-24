@@ -92,7 +92,7 @@ fun SubscribeScreen(navBack: () -> Unit,viewModel: SubscribeViewModel = hiltView
     }
 
     Scaffold { innerPadding->
-        ConstraintLayout(modifier = Modifier.padding(innerPadding).background(color = Color(0xFF101118)).fillMaxSize()) {
+        ConstraintLayout(modifier = Modifier.background(color = Color(0xFF101118)).padding(innerPadding).fillMaxSize()) {
             val (table, button) = createRefs()
             TopArea(modifier = Modifier.constrainAs(table) {
                 top.linkTo(parent.top)
@@ -410,7 +410,7 @@ fun BottomArea(modifier: Modifier, vip: Boolean, tip: String, onClick: () -> Uni
         }
         Text(
             tip,
-            modifier = Modifier.padding(start = 35.dp, top = 0.dp, end = 35.dp, bottom = 20.dp),
+            modifier = Modifier.padding(start = 35.dp, top = 0.dp, end = 35.dp, bottom = 10.dp),
             style = TextStyle(
                 textAlign = TextAlign.Center,
                 color = colorResource(R.color.color_ff878787),

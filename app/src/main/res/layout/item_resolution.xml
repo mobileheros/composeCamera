@@ -8,14 +8,14 @@
     android:paddingEnd="15dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    tools:background="@color/black">
+    tools:background="@color/white">
 
     <TextView
         android:id="@+id/resolutionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="5dp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_black"
         android:textSize="17sp"
         android:visibility="visible"
         tools:text="2560×1920" />
