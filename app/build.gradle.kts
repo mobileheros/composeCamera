@@ -11,8 +11,8 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.timecamera.stampcamera.gpscamera"
-//        applicationId = "com.mobileheros.gpscamera"
+//        applicationId = "com.timecamera.stampcamera.gpscamera"
+        applicationId = "com.watermarkpro.photostamp.timecamera"
         minSdk = 27
         targetSdk = 34
         versionCode = 1
@@ -23,7 +23,14 @@ android {
             useSupportLibrary = true
         }
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file("./../account2.jks")
+            storePassword = "123456"
+            keyAlias = "two"
+            keyPassword = "123456"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -31,6 +38,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
