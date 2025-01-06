@@ -4,6 +4,8 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -121,6 +123,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.navigation.ui.ktx)
+
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
 
 
     testImplementation(libs.junit)
