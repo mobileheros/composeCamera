@@ -30,7 +30,7 @@ object Constants {
     const val IS_RATED = "isRated"
     const val FIRST_PHOTO = "first_photo"
     const val RATED_SHOW_TIME = "show_time"
-    const val PRIVACY_URL = "https://www.baidu.com/"
+    const val PRIVACY_URL = "https://d1g5ijv7r006oi.cloudfront.net/watermark_pro_privacy.html"
 
     val FORMAT_LIST = listOf(
         "HH:mm:ss dd/MM/yyyy",

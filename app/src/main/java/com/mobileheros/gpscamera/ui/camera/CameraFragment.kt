@@ -424,6 +424,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
     }
 
     fun getMapWaterMark(isLandscape: Boolean, view: View, overlay: Bitmap?): WatermarkImage? {
+        Logger.e("getMapWaterMark${view.isShown}--${view.width}--${overlay==null}")
         if (context == null || !view.isShown || view.width == 0 || overlay == null) return null
 
         val scaleX = if (isLandscape) {
@@ -524,12 +525,14 @@ class CameraFragment : Fragment(), View.OnClickListener {
                                 it.scale(targetWidth, targetHeight)
                             } else it
 
-                            if (Global.map && mMap != null && isMapLoaded && location != null) {
+                            Logger.e("${Global.map}--${mMap==null}--$isMapLoaded--${this@CameraFragment.location}")
+                            if (Global.map && mMap != null && isMapLoaded && this@CameraFragment.location != null) {
                                 getMapWaterMark(
                                     isLandscape,
                                     binding.mapImage,
                                     CommonUtils.getBitmapFromViewUsingCanvas(binding.mapImage)
                                 )?.let { mark ->
+                                    Logger.e("add map mark")
                                     markList.add(mark)
                                 }
                                 generateWatermarkPicture(markList, isLandscape, scaleBitmap)
@@ -1309,10 +1312,12 @@ class CameraFragment : Fragment(), View.OnClickListener {
     private fun updateMapImage() {
         if (!Global.map) return
         if (isMapLoaded && location != null && mMap != null) {
+            Logger.e("updateMapImage")
             scopeNetLife {
                 location?.let {
                     if (isResumed) {
                         mMap!!.snapshot {
+                            Logger.e("updateMapImage--snapshot")
                             binding.mapImage.setImageBitmap(it)
                             binding.mapImage.visibility = VISIBLE
                             binding.mapLayout.getChildAt(1)?.visibility = GONE
