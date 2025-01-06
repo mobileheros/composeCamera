@@ -17,7 +17,7 @@ android {
         applicationId = "com.watermarkpro.photostamp.timecamera"
         minSdk = 27
         targetSdk = 34
-        versionCode = 1
+        versionCode = 3
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -84,15 +84,15 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.io.coil.kt.coil.compose3)
 
-    // The following line is optional, as the core library is included indirectly by camera-camera2
-    implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.camera.camera2)
-    // If you want to additionally use the CameraX Lifecycle library
-    implementation(libs.androidx.camera.lifecycle)
-    // If you want to additionally use the CameraX VideoCapture library
-    implementation(libs.androidx.camera.video)
-    // If you want to additionally use the CameraX View class
-    implementation(libs.androidx.camera.view)
+//    // The following line is optional, as the core library is included indirectly by camera-camera2
+//    implementation(libs.androidx.camera.core)
+//    implementation(libs.androidx.camera.camera2)
+//    // If you want to additionally use the CameraX Lifecycle library
+//    implementation(libs.androidx.camera.lifecycle)
+//    // If you want to additionally use the CameraX VideoCapture library
+//    implementation(libs.androidx.camera.video)
+//    // If you want to additionally use the CameraX View class
+//    implementation(libs.androidx.camera.view)
 
     implementation (libs.accompanist.permissions)
     implementation (libs.androidx.constraintlayout.compose)

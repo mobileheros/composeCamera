@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "647591407654",
+    "project_id": "gps-camera-map-compose",
+    "storage_bucket": "gps-camera-map-compose.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647591407654:android:da7ed6a50ab98e9c82b6e7",
+        "android_client_info": {
+          "package_name": "com.watermarkpro.photostamp.timecamera"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhiVtZs9q9rE2kLZI5I0GBoTtqisVOVAg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

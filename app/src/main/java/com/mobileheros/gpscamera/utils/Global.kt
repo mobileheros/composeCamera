@@ -28,4 +28,5 @@ object Global {
     var dateFormat: String = Constants.FORMAT_LIST[0]
     var timeFormat: String = "HH:mm:ss"
     var imageUri: Uri? = null
+    var updateLocation = true
 }

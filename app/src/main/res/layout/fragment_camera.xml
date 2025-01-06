@@ -39,6 +39,7 @@
                 android:id="@+id/pictureSizeSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:popupBackground="@drawable/bg_spinner"
                 android:spinnerMode="dropdown"
                 android:visibility="visible"
                 tools:visibility="gone" />
@@ -47,8 +48,7 @@
                 android:id="@+id/videoSizeSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:popupBackground="@color/white"
+                android:popupBackground="@drawable/bg_spinner"
                 android:spinnerMode="dropdown"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:keepScreenOn="true"
-            app:cameraAudio="off"
+            app:cameraAudio="on"
             app:cameraAutoFocusMarker="@string/cameraview_default_autofocus_marker"
             app:cameraEngine="camera2"
             app:cameraPlaySounds="false"

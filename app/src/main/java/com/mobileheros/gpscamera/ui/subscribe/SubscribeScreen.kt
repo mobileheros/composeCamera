@@ -96,7 +96,7 @@ fun SubscribeScreen(navBack: () -> Unit,viewModel: SubscribeViewModel = hiltView
             val (table, button) = createRefs()
             TopArea(modifier = Modifier.constrainAs(table) {
                 top.linkTo(parent.top)
-                bottom.linkTo(button.top)
+//                bottom.linkTo(button.top, margin = 20.dp)
             }, Global.isVip.value, uiState.list,uiState.index, viewModel::checkIndex)
             BottomArea(modifier = Modifier.constrainAs(button) {
                 bottom.linkTo(parent.bottom)
@@ -124,8 +124,8 @@ fun TopArea(
     Column(
         modifier = modifier.then(
             Modifier
-//                .verticalScroll(state = rememberScrollState())
-                .padding(horizontal = 16.dp)
+                .verticalScroll(state = rememberScrollState())
+                .padding(start = 16.dp, end = 16.dp, bottom = 120.dp)
 
         )
     ) {
@@ -177,7 +177,7 @@ fun TopArea(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 userScrollEnabled = false,
-                modifier = Modifier.selectableGroup()
+                modifier = Modifier.selectableGroup().height(200.dp)
             ) {
                 for (i in list.indices) {
                     item {
@@ -368,7 +368,7 @@ fun OwnedTip() {
 
 @Composable
 fun BottomArea(modifier: Modifier, vip: Boolean, tip: String, onClick: () -> Unit) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.background(Color(0xFF101118))) {
         TextButton(
             onClick = onClick,
             modifier = Modifier

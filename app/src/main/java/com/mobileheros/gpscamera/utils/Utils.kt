@@ -11,7 +11,7 @@ import android.icu.util.TimeZone
 import android.location.Location
 import android.net.Uri
 import android.provider.Settings
-import androidx.camera.core.ImageProxy
+//import androidx.camera.core.ImageProxy
 import java.nio.ByteBuffer
 import java.util.Locale
 
@@ -44,13 +44,13 @@ object Utils {
             e.printStackTrace()
         }
     }
-    fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-        val planeProxy = image.planes[0]
-        val buffer: ByteBuffer = planeProxy.buffer
-        val bytes = ByteArray(buffer.remaining())
-        buffer.get(bytes)
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-    }
+//    fun imageProxyToBitmap(image: ImageProxy): Bitmap {
+//        val planeProxy = image.planes[0]
+//        val buffer: ByteBuffer = planeProxy.buffer
+//        val bytes = ByteArray(buffer.remaining())
+//        buffer.get(bytes)
+//        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+//    }
 
     fun formatTime(): String {
         return SimpleDateFormat(Global.dateFormat, Locale.getDefault()).format(System.currentTimeMillis())

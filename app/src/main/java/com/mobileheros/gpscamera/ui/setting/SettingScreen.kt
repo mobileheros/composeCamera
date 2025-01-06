@@ -57,6 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mobileheros.gpscamera.R
 import com.mobileheros.gpscamera.ui.common.TitleBar
+import com.mobileheros.gpscamera.utils.CommonUtils
 import com.mobileheros.gpscamera.utils.Utils
 
 @Composable
@@ -219,9 +220,10 @@ fun PrivacyItem(navPrivacy: () -> Unit) {
 
 @Composable
 fun VersionItem() {
+    val context = LocalContext.current
     Card(
         colors = CardDefaults.cardColors().copy(containerColor = Color.White),
-        onClick = { /*TODO*/ }) {
+        onClick = { CommonUtils.openGooglePlay(context, context.packageName) }) {
         Row(
             modifier = Modifier
                 .padding(15.dp)
@@ -355,8 +357,7 @@ fun RateDialog(show: MutableState<Boolean>) {
                             modifier = Modifier.weight(1f),
                             onClick = {
                                 if (star.floatValue >= 5) {
-                                    //todo 跳转商店
-                                    Toast.makeText(context, "5星好评", Toast.LENGTH_LONG).show()
+                                    CommonUtils.openGooglePlay(context= context, packageName = context.packageName)
                                 }
                                 show.value = false
                             }) {

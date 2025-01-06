@@ -8,7 +8,7 @@
     android:paddingEnd="15dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    tools:background="@color/white">
+    android:background="@color/transparent">
 
     <TextView
         android:id="@+id/resolutionText"
@@ -26,12 +26,12 @@
         android:layout_marginStart="5dp"
         android:src="@mipmap/ic_pro"/>
 
-    <ImageView
-        android:id="@+id/dropdownIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:src="@mipmap/ic_drop_down"
-        android:visibility="gone"
-        tools:visibility="visible"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/dropdownIcon"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:src="@mipmap/ic_drop_down"-->
+<!--        android:visibility="gone"-->
+<!--        tools:visibility="visible"/>-->
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -17,6 +18,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Size
 import android.view.LayoutInflater
@@ -42,12 +44,17 @@ import com.drake.net.time.Interval
 import com.drake.net.utils.runMain
 import com.drake.net.utils.scopeNetLife
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationAvailability
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.gson.Gson
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
@@ -68,6 +75,7 @@ import com.mobileheros.gpscamera.utils.localConfig
 import com.mobileheros.gpscamera.utils.putData
 import com.orhanobut.logger.Logger
 import com.mobileheros.gpscamera.utils.Global.isVideo
+import com.mobileheros.gpscamera.utils.PlayBillingHelper
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.PictureResult
 import com.otaliastudios.cameraview.VideoResult
@@ -103,6 +111,8 @@ class CameraFragment : Fragment(), View.OnClickListener {
     private var px20: Double = 20.0
     var videoInterval: Interval = Interval(1, TimeUnit.SECONDS)
     private var curOrientation = 0
+    private lateinit var locationCallback: LocationCallback
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -125,15 +135,33 @@ class CameraFragment : Fragment(), View.OnClickListener {
         binding.captureMode.setOnClickListener(this)
         binding.videoMode.setOnClickListener(this)
         binding.proMode.setOnClickListener(this)
-        binding.time.text = CommonUtils.formatTime(Global.dateFormat, System.currentTimeMillis())
-        interval = Interval(1, TimeUnit.SECONDS).subscribe {
-            if (context != null) {
-                binding.time.text =
-                    CommonUtils.formatTime(Global.dateFormat, System.currentTimeMillis())
-            }
-        }.start()
+        if (Global.dateFormat == getString(R.string.display_off)) {
+            binding.time.visibility = GONE
+        } else {
+            binding.time.visibility = VISIBLE
+            binding.time.text = CommonUtils.formatTime(Global.dateFormat, System.currentTimeMillis())
+            interval = Interval(1, TimeUnit.SECONDS).subscribe {
+                if (context != null) {
+                    binding.time.text =
+                        CommonUtils.formatTime(Global.dateFormat, System.currentTimeMillis())
+                }
+            }.start()
+        }
         addMap()
         manager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                Logger.d(locationResult.locations)
+                if (locationResult.locations.isNotEmpty()) {
+                    locationUiTask(locationResult.locations[0])
+                }
+            }
+
+            override fun onLocationAvailability(p0: LocationAvailability) {
+                super.onLocationAvailability(p0)
+                Logger.d(p0)
+            }
+        }
         return root
     }
 
@@ -818,6 +846,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
         }
     }
 
+
     override fun onResume() {
         Logger.e("onResume: $this")
         val sensor = manager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
@@ -836,6 +865,11 @@ class CameraFragment : Fragment(), View.OnClickListener {
             }
             Global.firstPhoto = false
         }
+//        if (Global.updateLocation) startLocationUpdates()
+        PlayBillingHelper(requireActivity().application).apply {
+            binding.camera.postDelayed({this.queryPurchases(context)}, 1000)
+        }
+//        PlayBillingHelper(requireActivity().application).queryPurchases(context)
     }
 
     override fun onPause() {
@@ -844,13 +878,16 @@ class CameraFragment : Fragment(), View.OnClickListener {
         if (isRecording) {
             binding.camera.stopVideo()
         }
+//        fusedLocationClient.removeLocationUpdates(locationCallback)
         super.onPause()
     }
 
     override fun onDestroyView() {
         Logger.e("onDestroyView: $this")
         super.onDestroyView()
-        interval.cancel()
+        if (::interval.isInitialized) {
+            interval.cancel()
+        }
         EventBus.getDefault().unregister(this)
     }
 
@@ -900,6 +937,9 @@ class CameraFragment : Fragment(), View.OnClickListener {
 //                            if (tempUri != null) tempUri.toString() else ""
 //                        )
 //                    })
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.type = "image/*"
+                startActivity(intent)
             }
 
             R.id.light -> {
@@ -1004,6 +1044,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
                     @SuppressLint("MissingPermission")
                     override fun onGranted(p0: MutableList<String>, allGranted: Boolean) {
                         getLocation()
+//                        startLocationUpdates()
                     }
 
                     override fun onDenied(
@@ -1019,7 +1060,34 @@ class CameraFragment : Fragment(), View.OnClickListener {
                 })
         } else {
             getLocation()
+//            startLocationUpdates()
         }
+    }
+    private fun startLocationUpdates() {
+        if (context == null) return
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        Logger.e("startLocationUpdates--$location")
+        if (location != null) {
+            Global.updateLocation = false
+            locationUiTask(location!!)
+            return
+        }
+        val locationRequest = LocationRequest.create()
+            .setInterval(10000)
+            .setFastestInterval(5000)
+            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+            locationCallback,
+            Looper.getMainLooper())
     }
 
     private fun getLocation() {
@@ -1035,32 +1103,17 @@ class CameraFragment : Fragment(), View.OnClickListener {
             return
         }
         fusedLocationClient.lastLocation
+//        fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
             .addOnSuccessListener { location: Location? ->
                 if (context == null) return@addOnSuccessListener
                 // Got last known location. In some rare situations this can be null.
+                Logger.e(location.toString())
                 location?.let {
 //                    if (BuildConfig.DEBUG) {
 //                        location.latitude = 39.9049628889
 //                        location.longitude = 116.4272689819
 //                    }
-                    this.location = location
-                    updateMap(mMap)
-                    Logger.e(
-                        "convert: ${
-                            Location.convert(
-                                location.latitude,
-                                Location.FORMAT_DEGREES
-                            )
-                        }, ${Location.convert(location.longitude, Location.FORMAT_DEGREES)}"
-                    )
-                    Logger.e("location:${location}")
-
-                    binding.location.text =
-                        CommonUtils.getFormatLocationString(location)
-                    binding.altitude.text =
-                        "Altitude: ${String.format("%.2f", location.altitude)}"
-                    getWeather(location.latitude, location.longitude)
-                    getAddressInfo(location.latitude, location.longitude)
+                    locationUiTask(location)
                 }
             }.addOnFailureListener {
                 Logger.e("get location fail ${it.localizedMessage}")
@@ -1069,6 +1122,27 @@ class CameraFragment : Fragment(), View.OnClickListener {
                 Logger.e("addOnCompleteListener")
             }
 
+    }
+    private fun locationUiTask(location: Location) {
+        this.location = location
+        Global.updateLocation = false
+        updateMap(mMap)
+        Logger.e(
+            "convert: ${
+                Location.convert(
+                    location.latitude,
+                    Location.FORMAT_DEGREES
+                )
+            }, ${Location.convert(location.longitude, Location.FORMAT_DEGREES)}"
+        )
+        Logger.e("location:${location}")
+
+        binding.location.text =
+            CommonUtils.getFormatLocationString(location)
+        binding.altitude.text =
+            "Altitude: ${String.format("%.2f", location.altitude)}"
+        getWeather(location.latitude, location.longitude)
+        getAddressInfo(location.latitude, location.longitude)
     }
 
     private fun getAddressInfo(lat: Double, lng: Double) {
@@ -1262,7 +1336,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
             index = 0
         }
         Constants.image_resolution_list[index].isChecked = true
-        binding.pictureSizeSpinner.dropDownVerticalOffset = CommonUtils.dp2px(requireContext(), 48f)
+        binding.pictureSizeSpinner.dropDownVerticalOffset = CommonUtils.dp2px(requireContext(), 10f)
         binding.pictureSizeSpinner.adapter =
             ResolutionAdapter(Constants.image_resolution_list).apply {
                 setListener(object : ResolutionAdapter.OnItemClickListener {
@@ -1312,7 +1386,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
             index = 0
         }
         Constants.video_resolution_list[index].isChecked = true
-        binding.videoSizeSpinner.dropDownVerticalOffset = CommonUtils.dp2px(requireContext(), 48f)
+        binding.videoSizeSpinner.dropDownVerticalOffset = CommonUtils.dp2px(requireContext(), 10f)
         binding.videoSizeSpinner.adapter =
             ResolutionAdapter(Constants.video_resolution_list).apply {
                 setListener(object : ResolutionAdapter.OnItemClickListener {

@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.mobileheros.gpscamera.R
-import com.mobileheros.gpscamera.ui.watermark.WatermarkSettingScreen
 import com.mobileheros.gpscamera.utils.CommonUtils.safeNavigate
 
 class SettingFragment : Fragment() {

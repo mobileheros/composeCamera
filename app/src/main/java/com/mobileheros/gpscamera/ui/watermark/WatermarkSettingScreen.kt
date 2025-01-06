@@ -25,6 +25,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -45,6 +46,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -87,15 +89,13 @@ fun WatermarkSettingScreen(
 ) {
     Scaffold(topBar = {
         TopAppBar(
-            modifier = Modifier.background(Color.White),
+            colors = TopAppBarDefaults.topAppBarColors().copy(containerColor = Color.White),
             title = { Text(text = stringResource(id = R.string.watermark_settings)) },
             navigationIcon = {
-                Image(
-                    painter = painterResource(id = R.mipmap.ic_back),
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
-                    modifier = Modifier
-                        .clickable { navBack() }
-                        .padding(horizontal = 10.dp)
+                    modifier = Modifier.padding(horizontal = 10.dp).clickable { navBack() }
                 )
             },
             actions = {
@@ -209,8 +209,8 @@ fun TopPanel(viewModel: WatermarkSettingViewModel) {
                 viewModel::updateAddress
             )
             HorizontalDivider(color = colorResource(id = R.color.gray_line), thickness = 0.5.dp)
-//            SwitchItem(stringResource(id = R.string.map), uiState.value.map, viewModel::updateMap)
-//            HorizontalDivider(color = colorResource(id = R.color.gray_line), thickness = 0.5.dp)
+            SwitchItem(stringResource(id = R.string.map), uiState.value.map, viewModel::updateMap)
+            HorizontalDivider(color = colorResource(id = R.color.gray_line), thickness = 0.5.dp)
             SwitchItem(
                 stringResource(id = R.string.weather),
                 uiState.value.weather,

@@ -228,18 +228,28 @@ class PlayBillingHelper(application: Application) : PurchasesUpdatedListener, Bi
     fun queryPurchases(
         context: Context?,
         listener: PurchasesResponseListener = PurchasesResponseListener { billingResult, list ->
+            Logger.d("billingResult--${billingResult}")
             if (billingResult.responseCode == BillingResponseCode.OK) {
-                Log.e("test", list.toString())
+                Log.e("test_query", list.toString())
+                if (list.isNotEmpty()) {
+
+                Logger.e("state${list[0].purchaseState}--acknowledged${list[0].isAcknowledged}")
+                }
+                val owned = list.any { it.isAcknowledged }
+                Logger.e("owned==$owned")
                 val result = list.filter { it.purchaseState == PurchaseState.PURCHASED }
 //                Global.isVip.value = false
-                if (Global.isVip.value != (result.isNotEmpty())) {
-                    Global.isVip.value = (result.isNotEmpty())
+                Logger.e("${Global.isVip.value}--${result.isNotEmpty()}--${Global.localVip}")
+                if (Global.isVip.value != owned) {
+                    Global.isVip.value = owned
+                    Global.localVip = owned
                     //已订阅
                     runBlocking(Dispatchers.Main) {
 //                        EventBus.getDefault().post(SubscribeStatusEvent())
                     }
                     context?.localConfig?.putData("isVip", Global.isVip.value)
                 }
+                Logger.e("${Global.isVip.value}--${result.isNotEmpty()}--${Global.localVip}")
             }
         }
     ) {

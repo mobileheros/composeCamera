@@ -3,6 +3,7 @@ package com.mobileheros.gpscamera.dialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.RatingBar
 import android.widget.Toast
 import com.mobileheros.gpscamera.R
@@ -23,6 +24,11 @@ class RateDialog(mContext: Context) :
         binding = DialogRateBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
+        window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT)
+        val padding = CommonUtils.dp2px(ctx, 20f)
+        window?.decorView?.setPadding(padding, 0, padding, 0)
         binding.btnOk.setOnClickListener {
             if (star == 5f) {
                 CommonUtils.openGooglePlay(ctx, ctx.packageName)

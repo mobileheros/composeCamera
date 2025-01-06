@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.watermarkpro.photostamp.timecamera" />
+                  <option name="mobileSdkAppId" value="1:647591407654:android:da7ed6a50ab98e9c82b6e7" />
+                  <option name="projectId" value="gps-camera-map-compose" />
+                  <option name="projectNumber" value="647591407654" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

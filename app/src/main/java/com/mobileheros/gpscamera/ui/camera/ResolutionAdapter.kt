@@ -41,7 +41,7 @@ class ResolutionAdapter(var data: List<ResolutionBean>): BaseAdapter() {
         val bean = data[position]
         view.resolutionText.text = bean.title
         view.iconPro.visibility = if (bean.isPro) View.VISIBLE else View.GONE
-        view.dropdownIcon.visibility = View.VISIBLE
+//        view.dropdownIcon.visibility = View.VISIBLE
         return view.root
     }
 
@@ -60,7 +60,7 @@ class ResolutionAdapter(var data: List<ResolutionBean>): BaseAdapter() {
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = ItemResolutionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         view.resolutionText.text = data[position].title
-        view.resolutionText.setTextColor(view.root.context.getColor(if (data[position].isChecked) R.color.main else R.color.white))
+        view.resolutionText.setTextColor(view.root.context.getColor(if (data[position].isChecked) R.color.main else R.color.text_666666))
         view.iconPro.visibility = if (data[position].isPro) View.VISIBLE else View.GONE
         listener?.let {item ->
             view.root.setOnClickListener {
