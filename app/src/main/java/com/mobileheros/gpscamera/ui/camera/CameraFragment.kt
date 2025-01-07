@@ -24,6 +24,7 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -1009,6 +1010,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
                     binding.flashLayout.visibility = VISIBLE
                 }
             }
+            binding.topPanel.visibility = INVISIBLE
         } else {
             binding.flashLayout.visibility = VISIBLE
             val animator = ObjectAnimator.ofFloat(
@@ -1024,6 +1026,7 @@ class CameraFragment : Fragment(), View.OnClickListener {
                     binding.flashLayout.visibility = GONE
                 }
             }
+            binding.topPanel.visibility = VISIBLE
         }
     }
 

@@ -5,13 +5,52 @@
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@color/white"
     android:background="@color/white">
 
+    <LinearLayout
+        android:id="@+id/flashLayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:elevation="1dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/light_auto"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="3dp"
+            android:adjustViewBounds="true"
+            android:padding="12dp"
+            android:src="@mipmap/ic_flash_auto" />
+
+        <ImageView
+            android:id="@+id/light_on"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:padding="12dp"
+            android:src="@mipmap/ic_flash_on" />
+
+        <ImageView
+            android:id="@+id/light_off"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:padding="12dp"
+            android:src="@mipmap/ic_flash_off" />
+    </LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topPanel"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -56,41 +95,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/flashLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="gone">
 
-            <ImageView
-                android:id="@+id/light_auto"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="3dp"
-                android:adjustViewBounds="true"
-                android:padding="12dp"
-                android:src="@mipmap/ic_flash_auto" />
-
-            <ImageView
-                android:id="@+id/light_on"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:padding="12dp"
-                android:src="@mipmap/ic_flash_on" />
-
-            <ImageView
-                android:id="@+id/light_off"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:padding="12dp"
-                android:src="@mipmap/ic_flash_off" />
-        </LinearLayout>
 
         <TextView
             android:id="@+id/videoDuration"
